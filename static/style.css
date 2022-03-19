@@ -1,0 +1,13 @@
+.img-large {
+  max-width: 7.5%;
+  max-height: 7.5%;
+}
+
+.img-medium {
+  max-width: 2.5%;
+  max-height: 2.5%;
+}
+
+.nav-bar {
+  display: flex;
+}
