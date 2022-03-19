@@ -1,5 +1,4 @@
 TO IMPLEMENT :-
--> Load comments without needing to refresh page - use AJAX.
 
 -> Implement p2p functionality, User will have the file on their machine and will only share the filename and path,
 ...When another user requests for file, websockets will be created to help i transfer ofthe file.
