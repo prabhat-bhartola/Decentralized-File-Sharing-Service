@@ -1,20 +1,14 @@
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  background-color: #ffffff;
-}
-
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 10%;
+  padding: 12.5px 10%;
+  background-color: #7952b3;
+  justify-content: flex-end;
 }
 
 .logo {
-  min-width: 2em;
-  min-height: 2em;
+  margin-right: 0px;
 }
 
 header li,
@@ -25,15 +19,14 @@ button {
 
 .nav-links {
   list-style: none;
+  margin: auto;
+  margin-left: 0px;
 }
 
 .nav-links li {
   display: inline-block;
-  padding: 0px 20px;
-}
-
-.nav-imgs {
-  display: ;
+  padding: 0px 5px;
+  color: rgb(255, 255, 255);
 }
 
 .img-links {
@@ -42,5 +35,5 @@ button {
 }
 
 button {
-  padding: 9px 25px;
+  margin: 0px 12.5px;
 }
