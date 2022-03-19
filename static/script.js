@@ -1,12 +1,3 @@
-// IMPLEMENTING SIDEBAR
-$(document).ready(function () {
-
-    $('#sidebarCollapse').on('click', function () {
-        $('#sidebar').toggleClass('active');
-    });
-});
-
-
 // IMPLEMENTING UPLOAD
 function myFile(){
     document.getElementById('file').click();
