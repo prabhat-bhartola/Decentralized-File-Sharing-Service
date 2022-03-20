@@ -53,3 +53,15 @@ loadchats; // This will run on page load
 setInterval(function(){
     loadchats() // this will run after every 5 seconds
 }, 5000);
+
+//
+// $(window).scroll(function(e){ 
+//     var $el = $('.top-bar'); 
+//     var isPositionFixed = ($el.css('position') == 'fixed');
+//     if ($(this).scrollTop() > 50 && !isPositionFixed){ 
+//       $el.css({'position': 'fixed', 'top': '0px'}); 
+//     }
+//     if ($(this).scrollTop() < 50 && isPositionFixed){
+//       $el.css({'position': 'static', 'top': '0px'}); 
+//     } 
+//   }); 
