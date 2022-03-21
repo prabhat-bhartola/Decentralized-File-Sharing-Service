@@ -14,32 +14,30 @@
 
     <link rel="stylesheet" href="../static/style.css">
 
-    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script> -->
-
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
     <!-- Popper.JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
         integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
         crossorigin="anonymous"></script>
+
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
         integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
         crossorigin="anonymous"></script>
 
-    <script language="JavaScript" type="text/javascript" src="../static/script.js"></script>
     <!-- Font awesome kit -->
     <script src="https://kit.fontawesome.com/46fe3a765f.js" crossorigin="anonymous"></script>
 
     <!-- local bootstrap -->
     <script src="../static/bootstrap-5.1.3-dist/bootstrap.min.css"></script>
 
+    <script language="JavaScript" type="text/javascript" src="../static/script.js"></script>
+
 
 </head>
 
-<body onload="loadchats(scrollToBottom);">
+<body onload="loadPageWithScroll(scrollToBottom)">
 
     <!-- HEADER START -->
     <header class="header">
@@ -83,7 +81,8 @@
     <div class="all-content">
 
         <!-- SIDEBAR START -->
-        <aside class="chats" style="position: relative;" id="chats-scroll">
+        <!-- <aside class="chats" style="position: relative;" id="chats-scroll"> -->
+        <aside class="chats" id="chats-scroll">
             <header style="border-bottom:1px solid #d9d9d9"><strong style="color: #242424;">CHATS</strong></header>
             <ul>
                 <li id="all-chats">
@@ -94,13 +93,15 @@
             </ul>
 
             <!-- INPUT MESSAGE START -->
-            <div class="enter-msg">
-                <div>
+            <div class="enter-msg" style="justify-content: flex-start; padding-left: 5%;">
+                <form style="min-width: 100%;">
                     <label placeholer="Type message here..."></label>
-                    <input type="text" name="message" id="msg" />
-                </div>
-                <button button_id="msg_send" class="sendButton btn btn-primary"
-                    onclick="scrollToBottom();">Send</button>
+                    <input type="text" name="message" id="msg" autocomplete="off" style="min-width: 82.5%;" />
+                    <input type="submit" class="sendButton" onclick="sendButtonClick();" hidden />
+                    <input type="submit" class="sendButton btn btn-light" onclick="sendButtonClick();" value="Send" />
+                </form>
+                <!-- <button button_id="msg_send" class="sendButton btn btn-primary"
+                    onclick="sendButtonClick();">Send</button> -->
             </div>
             <!-- INPUT MESSAGE END -->
 
@@ -113,7 +114,7 @@
         <main class="files-sec">
 
             <!-- TABLE START -->
-            <table class="table-bordered">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Category</th>
@@ -125,7 +126,7 @@
                 </thead>
                 {% for file in files %}
                 <tr>
-                    <td>Category</td>
+                    <td>{{ file["file_type"]}}</td>
                     <td>{{ file["file_name"] }}</td>
                     <td>{{ file["file_size"] }}</td>
                     <td>{{ file["uploaded_by"] }}</td>

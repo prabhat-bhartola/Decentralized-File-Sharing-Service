@@ -7,9 +7,9 @@ class Files(db.Model):
     file_name = db.Column(db.String, nullable=False)
     file_type = db.Column(db.String, nullable=False)
     file_size = db.Column(db.Float, nullable=False)
-    file_path = db.Column(db.String, nullable=False, default="anonymous")
-    uploaded_by = db.Column(db.String)
-    file_desc = db.Column(db.String, default="None")
+    file_path = db.Column(db.String, nullable=False)
+    uploaded_by = db.Column(db.String, default="anonymous")
+    file_desc = db.Column(db.String, default="NULL")
 
     def __init__(self, file_name, file_type, file_size, file_path, uploaded_by, file_desc):
         self.file_name = file_name

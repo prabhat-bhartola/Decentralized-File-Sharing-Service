@@ -139,6 +139,7 @@ def upload_file():
 			desc = request.form["description"]
 
 			file_type = tools.get_type_from_ext(file_name)
+			print(file_type)
 
 			new_file = Files(file_name, file_type, 00, abs_path, "User", desc)
 

@@ -5,13 +5,13 @@ import os
 
 def parse_type(fileName):
     """
-    Returns the file type from string
+    Returns the filetype in lower from string
 
     Parameters
     ----------
     fileName : str -> 
     """
-    return fileName.split(".")[-1]
+    return fileName.split(".")[-1].lower()
 
 
 def parse_path(fileName):
@@ -46,17 +46,24 @@ def get_type_from_ext(file_name):
     """
     Determines and returns file type from file name
     """
-    file_type = ""
+    try:
+        file_type = ""
 
-    if file_type.lower() in ("png", "jpg", "jpeg"):
-        file_type = "Image"
-    elif file_type.lower() in ("mp4", "avi", "mpeg", "mov", "wmv"):
-        file_type = "Video"
-    elif file_type.lower() in ("wav", "mp3", "flac"):
-        file_type = "Audio"
-    elif file_type.lower() in ("rar", "tar.lz"):
-        file_type = "Compressed"
-    else:
-        file_type = "."+parse_type(file_name)
-    
-    return file_type
+        if parse_type(file_name) in ("png", "jpg", "jpeg", "svg"):
+            file_type = "Image"
+        elif parse_type(file_name) in ("mp4", "avi", "mpeg", "mov", "wmv"):
+            file_type = "Video"
+        elif parse_type(file_name) in ("wav", "mp3", "flac"):
+            file_type = "Audio"
+        elif parse_type(file_name) in ("rar", "tar.lz", "zip"):
+            file_type = "Compressed"
+        elif parse_type(file_name) in ("pdf"):
+            file_type = "PDF"
+        elif parse_type(file_name) in ("exe"):
+            file_type = "Executable"
+        else:
+            file_type = "."+parse_type(file_name)
+        
+        return file_type
+    except Exception as e:
+        print(e)

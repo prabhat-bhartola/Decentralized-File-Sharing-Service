@@ -41,8 +41,12 @@ button {
   min-width: 1.5em;
   min-height: 1.5em;
 }
-
+/* 
 button {
+  margin: 0px 12.5px;
+} */
+
+.sendButton {
   margin: 0px 12.5px;
 }
 
@@ -109,8 +113,8 @@ button {
 .indv-msg {
   background-color: #f5f5f5;
   margin-right: 10px;
-  padding-top: 1%;
-  padding-bottom: 1%;
+  padding-top: 2%;
+  padding-bottom: 2%;
   padding-left: 1%;
   padding-right: 1%;
 }
@@ -122,22 +126,21 @@ button {
   justify-content: flex-end;
   border-top: 1px solid #d9d9d9;
   height: auto;
-  height: auto;
 
   position: sticky;
   bottom: 0;
 }
 
-.enter-msg div {
+/* .enter-msg form {
   padding: 0 auto;
-  margin: 0 auto;
-}
+  margin-left: 1.5%;
+} */
 
-.enter-msg input {
+/* .enter-msg input {
   padding: 0 auto;
   margin: 0 auto;
   flex: 3;
-}
+} */
 
 .files-sec {
   flex: 1;
