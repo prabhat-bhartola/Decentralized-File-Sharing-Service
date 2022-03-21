@@ -1,8 +1,13 @@
-// IMPLEMENTING UPLOAD
+ // IMPLEMENTING UPLOAD
 function myFile(){
     document.getElementById('file').click();
 }
 
+// SCROLL TO BOTTOM OF THE CHATS DIV
+function scrollToBottom(){
+    var elem = document.getElementById("chats-scroll");
+    elem.scrollTop = elem.scrollHeight;
+};
 
 // IMPLEMENTING LOAD NEW CHATS WITHOUT RELOAD
 $(document).ready(function(){
@@ -34,7 +39,7 @@ $(document).ready(function(){
 
 
 // LOAD NEW CHATS EVERY 5 SECONDS
-function loadchats(){
+function loadchats(callback){
 
     req = $.ajax({
         url: "/chat",
@@ -44,7 +49,7 @@ function loadchats(){
             $("#all-chats").html(response);
         }
     });
-
+    callback();
 };
 
 loadchats();
@@ -53,15 +58,3 @@ loadchats; // This will run on page load
 setInterval(function(){
     loadchats() // this will run after every 5 seconds
 }, 5000);
-
-//
-// $(window).scroll(function(e){ 
-//     var $el = $('.top-bar'); 
-//     var isPositionFixed = ($el.css('position') == 'fixed');
-//     if ($(this).scrollTop() > 50 && !isPositionFixed){ 
-//       $el.css({'position': 'fixed', 'top': '0px'}); 
-//     }
-//     if ($(this).scrollTop() < 50 && isPositionFixed){
-//       $el.css({'position': 'static', 'top': '0px'}); 
-//     } 
-//   }); 

@@ -39,7 +39,7 @@
 
 </head>
 
-<body>
+<body onload="loadchats(scrollToBottom);">
 
     <!-- HEADER START -->
     <header class="header">
@@ -63,8 +63,8 @@
             </ul>
         </nav>
         <nav>
-            <button type="button" class="btn btn-outline-warning">Upload</button>
-            <button type="button" class="btn btn-outline-warning">Donate</button>
+            <button type="button" class="btn btn-outline-warning" onclick="location.href='/upload'">Upload</button>
+            <button type="button" class="btn btn-outline-warning" onclick="location.href='/donate'">Donate</button>
         </nav>
     </header>
     <!-- HEADER END -->
@@ -74,7 +74,7 @@
     <!-- NAV STARTS -->
     <nav class="top-bar shadow">
         <div>
-            <!-- INSERT FORM HERE -->
+            <!-- INSERT CONTENT HERE -->
         </div>
     </nav>
     <!-- NAV ENDS -->
@@ -83,10 +83,10 @@
     <div class="all-content">
 
         <!-- SIDEBAR START -->
-        <aside class="chat-sec">
+        <aside class="chats" style="position: relative;" id="chats-scroll">
             <header style="border-bottom:1px solid #d9d9d9"><strong style="color: #242424;">CHATS</strong></header>
             <ul>
-                <li>
+                <li id="all-chats">
                     <!-- ------------------ -->
                     <!-- MESSAGES COME HERE -->
                     <!-- ------------------ -->
@@ -99,7 +99,8 @@
                     <label placeholer="Type message here..."></label>
                     <input type="text" name="message" id="msg" />
                 </div>
-                <button button_id="msg_send">Send</button>
+                <button button_id="msg_send" class="sendButton btn btn-primary"
+                    onclick="scrollToBottom();">Send</button>
             </div>
             <!-- INPUT MESSAGE END -->
 
@@ -128,7 +129,8 @@
                     <td>{{ file["file_name"] }}</td>
                     <td>{{ file["file_size"] }}</td>
                     <td>{{ file["uploaded_by"] }}</td>
-                    <td><a href="/download/{{ file['file_no'] }}/"><button>Download</button></a></td>
+                    <td><a href="/download/{{ file['file_no'] }}/"><button class="btn btn-success">Download</button></a>
+                    </td>
                 </tr>
                 {% endfor %}
             </table>

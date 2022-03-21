@@ -1,3 +1,4 @@
 {% for msg in chats %}
-<p> {{ msg["written_by"] }}-{{ msg["datetime_created"] }} : {{ msg["message"] }} </p>
+<p class="indv-msg rounded "> {{ msg["written_by"] }}-{{ msg["datetime_created"] }} : {{ msg["message"] }}
+</p>
 {% endfor %}

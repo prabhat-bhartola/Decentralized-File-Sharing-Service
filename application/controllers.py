@@ -153,3 +153,15 @@ def upload_file():
 
 	else:
 		return render_template("went_wrong.html")
+
+@app.route("/donate", methods=["GET"])
+def donate():
+	return render_template("donate.html")
+
+@app.route("/about")
+def about():
+	return render_template("about.html")
+
+@app.route("/contact")
+def contact():
+	return render_template("contact.html")

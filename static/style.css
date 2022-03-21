@@ -49,11 +49,12 @@ button {
 /* ------------------------------------------------------------------- */
 /* NAV */
 .top-bar {
-  background-color: rgb(255, 255, 255, 90%);
+  background-color: rgb(255, 255, 255, 92.5%);
   min-height: 50px;
   position: sticky;
   top: 0px;
   border-bottom: 1px solid #d9d9d9;
+  z-index: 1;
 }
 
 .shadow {
@@ -64,60 +65,97 @@ button {
 /* CHATS AND MESSAGES */
 .all-content {
   display: flex;
-  padding-left: 2.5%;
-  padding-right: 2.5%;
-  padding-top: 2.5%;
+  padding: 2.5% 1%;
   margin: 0;
   flex-direction: row;
   min-height: 100%;
-  /* justify-content: space-between; */
-  /* flex-wrap: wrap; */
 }
 
-.chat-sec {
+.chats {
+  /* background-color: #7952b3;  */
   flex: 0.5;
-  /* background-color: aqua; */
-  margin-right: 2.5%;
-  min-height: 47.5rem;
-  padding-bottom: 25px;
+  /* margin-right: 2.5%; */
+  min-height: 50rem;
+  max-height: 50rem;
+  z-index: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.chat-sec header {
+.chats header {
   text-align: center;
   align-items: center;
+  position: absolute;
+  text-align: center;
+
+  background-color: rgb(255, 255, 255, 95%);
+  position: sticky;
+  top: 0%;
+  z-index: 1;
 }
 
-.chat-sec ul {
+.chats ul {
   min-height: 100%;
-  overflow-y: scroll;
   padding-bottom: 0;
   margin-bottom: 0;
   list-style: none;
+
+  padding-top: 5%;
+  padding-bottom: 2%;
+  z-index: 0;
+}
+
+.indv-msg {
+  background-color: #f5f5f5;
+  margin-right: 10px;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  padding-left: 1%;
+  padding-right: 1%;
 }
 
 .enter-msg {
+  background-color: rgb(255, 255, 255, 95%);
   display: flex;
   margin-top: 0;
-  padding-top: 0;
-  padding-bottom: 1%;
   justify-content: flex-end;
+  border-top: 1px solid #d9d9d9;
+  height: auto;
+  height: auto;
+
+  position: sticky;
+  bottom: 0;
 }
 
 .enter-msg div {
-  /* flex: 1; */
-  margin-right: auto;
+  padding: 0 auto;
+  margin: 0 auto;
 }
 
-/* .enter-msg button {
-  flex: 0.1;
-} */
+.enter-msg input {
+  padding: 0 auto;
+  margin: 0 auto;
+  flex: 3;
+}
 
 .files-sec {
   flex: 1;
   margin: 0;
-  padding: 0;
+  padding-right: 2.5%;
+  padding-left: 2.5%;
 }
 
 .files-sec table {
   min-width: 100%;
+  /* margin-left: 2.5%; */
+  /* margin-right: 2.5%; */
+}
+
+/* ------------------------------------------------------------------- */
+/* FOOTER */
+footer {
+  margin-top: 2.5%;
+  background-color: #f8f9fa;
+  padding: 5%;
 }
