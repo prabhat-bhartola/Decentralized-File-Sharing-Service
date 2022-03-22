@@ -66,22 +66,49 @@ setInterval(function(){
 
 function loadPageWithScroll(callback){
     loadchats();
-    // callback();
-
     setDelay(callback);
 };
+
 
 // CLEARS CONTENT OF TEXT FIELD
 function clearContent(){
     document.getElementById("msg").value="";
 }
 
+
 function sendButtonClick(){
     setDelay(clearContent);
     setDelay(scrollToBottom);
 }
 
+
 // PREVENT FORM FROM REFRESHING PAGE
 $(function() {
     $("form").submit(function() { return false; });
 });
+
+
+
+
+// WEBRTC CONNECTION FROM HERE
+function create_webrtc_init_conn(){
+    var configuration = [];
+
+    peerConnection = new RTCPeerConnection(configuration);
+
+    console.log(peerConnection);
+}
+// create_webrtc_init_conn();
+
+
+function create_datachannel(){
+    const dataChannelOptions = {
+        ordered: true
+    }
+
+    send_datachannel = peerConnection.create_datachannel("New Channel", dataChannelOptions);
+    console.log(send_datachannel);
+
+    send_datachannel.onclose = onSend_ChannelCloseStateChange;
+}
+create_datachannel()
