@@ -16,7 +16,7 @@ function scrollToBottom(){
     elem.scrollTop = elem.scrollHeight;
 };
 
-// IMPLEMENTING LOAD NEW CHATS WITHOUT RELOAD
+// LOAD NEW CHATS WITHOUT RELOAD
 $(document).ready(function(){
 
     $('.sendButton').on('click', function(event){
@@ -38,9 +38,7 @@ $(document).ready(function(){
                     $("#all-chats").html(response);
                 }
             });
-
         });
-
     });
 });
 
@@ -57,8 +55,6 @@ function loadchats(){
         }
     });
 };
-
-// loadchats; // This will run on page load
 
 setInterval(function(){
     loadchats() // this will run after every 5 seconds
@@ -91,24 +87,24 @@ $(function() {
 
 
 // WEBRTC CONNECTION FROM HERE
-function create_webrtc_init_conn(){
-    var configuration = [];
+// function create_webrtc_init_conn(){
+//     var configuration = [];
 
-    peerConnection = new RTCPeerConnection(configuration);
+//     peerConnection = new RTCPeerConnection(configuration);
 
-    console.log(peerConnection);
-}
-// create_webrtc_init_conn();
+//     console.log(peerConnection);
+// }
+// // create_webrtc_init_conn();
 
 
-function create_datachannel(){
-    const dataChannelOptions = {
-        ordered: true
-    }
+// function create_datachannel(){
+//     const dataChannelOptions = {
+//         ordered: true
+//     }
 
-    send_datachannel = peerConnection.create_datachannel("New Channel", dataChannelOptions);
-    console.log(send_datachannel);
+//     send_datachannel = peerConnection.create_datachannel("New Channel", dataChannelOptions);
+//     console.log(send_datachannel);
 
-    send_datachannel.onclose = onSend_ChannelCloseStateChange;
-}
-create_datachannel()
+//     send_datachannel.onclose = onSend_ChannelCloseStateChange;
+// }
+// create_datachannel()

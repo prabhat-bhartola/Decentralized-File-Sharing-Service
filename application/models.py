@@ -10,15 +10,18 @@ class Files(db.Model):
     file_path = db.Column(db.String, nullable=False)
     uploaded_by = db.Column(db.String, default="anonymous")
     file_desc = db.Column(db.String, default="NULL")
+    currently_hosted = db.Column(db.Integer, default=1)
+    uploader_ip = db.Column(db.String, nullable=False, default="0.0.0.0")
 
-    def __init__(self, file_name, file_type, file_size, file_path, uploaded_by, file_desc):
+    def __init__(self, file_name, file_type, file_size, file_path, uploaded_by, file_desc, ip):
         self.file_name = file_name
         self.file_type = file_type
         self.file_size = file_size
         self.file_path = file_path
         self.uploaded_by = uploaded_by
         self.file_desc = file_desc
-    
+        self.uploader_ip = ip
+
 class Chats(db.Model):
     __tablename__ = 'chats'
     chat_no = db.Column(db.Integer, autoincrement=True, primary_key=True)

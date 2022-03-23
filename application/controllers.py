@@ -7,6 +7,11 @@ from application.models import *
 from application import tools
 
 
+@app.route("/get-ip", methods=["GET"])
+def get_user_ip():
+	# return jsonify({"ip": request.remote_addr})
+	return request.remote_addr
+
 @app.route("/")
 def home():
 	'''
@@ -17,7 +22,7 @@ def home():
 
 		try:
 
-			files = Files.query.all()
+			files = Files.query.filter_by(currently_hosted=1).all()
 			chats = Chats.query.all()
 
 			return render_template("home.html", files=files)
@@ -25,21 +30,6 @@ def home():
 		except:
 
 			return render_template("went_wrong.html")
-	# elif request.method == "POST":
-
-	# 	try:
-
-	# 		message = request.form["message"]
-
-	# 		new_message = Chats("anonymous", message)
-	# 		db.session.add(new_message)
-	# 		db.session.commit()
-	# 		# return redirect("/home")
-	# 		return redirect(request.referrer)
-	# 		# return jsonify({'result': 'success'})
-	# 	except Exception as e:
-	# 		print(e)
-	# 		return render_template("went_wrong.html")	
 	else:
 
 		return render_template("went_wrong.html")
@@ -104,10 +94,10 @@ def download_file(file_no):
 
 	except Exception as e:
 		'''
-		If file is not present, Remove it from the database
+		If file is not present, Set currently hosted to 0
 		'''
 		curr_file = Files.query.filter_by(file_no=file_no).first()
-		db.session.delete(curr_file)
+		curr_file.currently_hosted = 0
 
 		db.session.commit()
 
@@ -137,11 +127,11 @@ def upload_file():
 			file_name = request.form["file_name"]
 			abs_path = request.form["abs_path"]
 			desc = request.form["description"]
+			ip = request.form["ip"]
 
 			file_type = tools.get_type_from_ext(file_name)
-			print(file_type)
 
-			new_file = Files(file_name, file_type, 00, abs_path, "User", desc)
+			new_file = Files(file_name, file_type, 00, abs_path, "User", desc, ip)
 
 			db.session.add(new_file)
 			db.session.commit()
