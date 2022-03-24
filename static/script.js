@@ -3,6 +3,7 @@ function myFile(){
     document.getElementById('file').click();
 };
 
+
 // SETS DELAY TO FUNCTION
 function setDelay(callback){
     setTimeout(function(){
@@ -10,11 +11,13 @@ function setDelay(callback){
       }, 100);
 }
 
+
 // SCROLL TO BOTTOM OF THE CHATS DIV
 function scrollToBottom(){
     var elem = document.getElementById("chats-scroll");
     elem.scrollTop = elem.scrollHeight;
 };
+
 
 // LOAD NEW CHATS WITHOUT RELOAD
 $(document).ready(function(){
@@ -60,6 +63,7 @@ setInterval(function(){
     loadchats() // this will run after every 5 seconds
 }, 5000);
 
+
 function loadPageWithScroll(callback){
     loadchats();
     setDelay(callback);
@@ -86,25 +90,49 @@ $(function() {
 
 
 
-// WEBRTC CONNECTION FROM HERE
-// function create_webrtc_init_conn(){
-//     var configuration = [];
+// WEB-RTC CONNECTION FROM HERE
 
-//     peerConnection = new RTCPeerConnection(configuration);
+// WILL RUN ON THE CLIENT HOSTING THE FILE / OR EVERY CLIENT - I AM NOT SO SURE ABOUT IT
+function init_conn(){
+    lc = new RTCPeerConnection();
+    dc = lc.createDataChannel("channel");
 
-//     console.log(peerConnection);
-// }
-// // create_webrtc_init_conn();
+    dc.onmessage = e => console.log("Just got a message " + e.data);
+    dc.onopen = e => console.log("Connection Open!");
+
+    // EVERY TIME WE GET A NEW ICE CANDIDATE
+    lc.onicecandidate = e =>{
+        // console.log("New ICE Candidate! reprinting SDP" + JSON.stringify(lc.localDescription));
+        ld = JSON.stringify(lc.localDescription);
+    }
+
+    lc.createOffer().then(o => lc.setLocalDescription(o));
 
 
-// function create_datachannel(){
-//     const dataChannelOptions = {
-//         ordered: true
-//     }
+    // RUN AFTER GETTING ANSWER AS RESPONSE FROM THE REQUESTEE
+    // const answer = null // ANSWER GOES HERE
+    // lc.setRemoteDescription(answer)
+}
+var ld;
+var lc;
+var dc;
+$(document).ready(init_conn());
 
-//     send_datachannel = peerConnection.create_datachannel("New Channel", dataChannelOptions);
-//     console.log(send_datachannel);
 
-//     send_datachannel.onclose = onSend_ChannelCloseStateChange;
-// }
-// create_datachannel()
+// WILL RUN ON THE CLIENT REQUESTING THE FILE
+function client_request(){
+    const offer = NULL; // CHANGE HERE
+
+    const rc = new RTCPeerConnection();
+
+    rc.onicecandidate = e => console.log(JSON.stringify(rc.localDescription));
+
+    rc.ondatachannel = e => {
+        rc.dc = e.channel;
+        rc.dc.onmessage = e => console.log("new message - " + e.data);
+        rc.dc.onopen = e => console.log("Connection OPEN!");
+    }
+
+    rc.setRemoteDescription(offer).then(a => console.log("offer set!"));
+    rc.createAnswer().then(a => rc.setLocalDescription(a));
+}
