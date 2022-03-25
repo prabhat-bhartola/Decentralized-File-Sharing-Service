@@ -127,7 +127,7 @@
                     <td>{{ file["file_type"]}}</td>
                     <td>{{ file["file_name"] }}</td>
                     <td>{{ file["file_size"] }}</td>
-                    <td>{{ file["uploaded_by"] }}</td>
+                    <td>{{ file["u_ip"][:3] }}.XXX.XX.{{ file["u_ip"][11:] }}</td>
                     <td><a href="/download/{{ file['file_no'] }}/"><button class="btn btn-success">Download</button></a>
                     </td>
                 </tr>

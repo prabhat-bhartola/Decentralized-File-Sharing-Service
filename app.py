@@ -4,6 +4,7 @@ from application import config
 from application.config import LocalDevelopmentConfig
 from application.database import db
 
+
 app = None
 
 def create_app():
@@ -22,7 +23,12 @@ app = create_app()
 from application.controllers import *
 
 if __name__ == '__main__':
+    # app.run(
+    #     host='0.0.0.0',
+    #     port=8080
+    # )
+    context = ('local.crt', 'local.key')
     app.run(
-        host='0.0.0.0',
+        host='192.168.29.83',
         port=8080
     )

@@ -21,7 +21,7 @@ class Files(db.Model):
     file_no = db.Column(db.Integer, autoincrement=True, primary_key=True)
     file_name = db.Column(db.String, nullable=False)
     file_type = db.Column(db.String, nullable=False)
-    file_size = db.Column(db.Float, nullable=False)
+    file_size = db.Column(db.String, nullable=False)
     file_path = db.Column(db.String, nullable=False)
     file_desc = db.Column(db.String, default="NULL")
     u_ip = db.Column(db.String, db.ForeignKey('users.ip_addr'), nullable=False, default="127.0.0.1")

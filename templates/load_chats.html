@@ -1,8 +1,11 @@
 {% for msg in chats %}
-<div class="indv-msg rounded" style="margin-bottom: 2.5%;">
-    <div class="small-text">{{ msg["written_by"] }}</div>
-    <div class="small-text">{{ msg["date_created"] }}</div>
-    <div>{{ msg["message"] }}</div>
-    <div class="small-text">{{ msg["time_created"] }}</div>
+<div class="indv-msg rounded" style="margin: 1% 2.5%; margin-bottom: 2.5%; display: flex; flex-direction: column;">
+    <div class="small-text" style="display: flex;">
+        <div class="small-text">{{ msg["written_by"] }}</div>
+        <div class="small-text" style="margin-left: auto;">{{ msg["date_created"] }}</div>
+    </div>
+
+    <div style="margin: 1% 1%">{{ msg["message"] }}</div>
+    <div class="small-text" style="margin-left: auto;">{{ msg["time_created"] }}</div>
 </div>
 {% endfor %}

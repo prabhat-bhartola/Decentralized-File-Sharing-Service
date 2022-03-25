@@ -63,7 +63,7 @@ def send_message():
 		result = []
 		for chat in chats:
 			result.append({
-				"written_by": chat.author_ip,
+				"written_by": chat.author_ip[:3] + ".XXX.XX." + chat.author_ip[11:],
 				"date_created": chat.date_created,
 				"time_created": chat.time_created,
 				"message": chat.content
@@ -160,7 +160,7 @@ def upload_file():
 
 			file_type = tools.get_type_from_ext(file_name)
 
-			new_file = Files(file_name, file_type, 00, abs_path, desc, ip)
+			new_file = Files(file_name, file_type, "-", abs_path, desc, ip)
 
 			db.session.add(new_file)
 			db.session.commit()
