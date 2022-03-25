@@ -6,13 +6,10 @@ from flask import send_file, send_from_directory, safe_join, abort
 from application.models import *
 from application import tools
 
-
-# @app.route("/get-ip", methods=["GET"])
-# def get_user_ip():
-# 	return request.remote_addr
+from random import randint
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def home():
 	'''
 	Show all files and chats in home page.
@@ -30,7 +27,7 @@ def home():
 
 			if user is None:
 				# GET THE SDP AND INSERT WITH ALL OTHER DETAILS
-				new_user = Users(user_ip, "anonymous", "host sd", "client sd")
+				new_user = Users(user_ip, "anonymous", str(randint(0, 100000)), str(randint(0, 100000)))
 
 				db.session.add(new_user)
 				db.session.commit()
@@ -47,6 +44,7 @@ def home():
 		except:
 
 			return render_template("went_wrong.html")
+
 	else:
 
 		return render_template("went_wrong.html")

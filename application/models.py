@@ -6,7 +6,7 @@ class Users(db.Model):
     ip_addr = db.Column(db.String, primary_key=True)
     user_name = db.Column(db.String, default="anonymous")
     conn_status = db.Column(db.Integer, default=1)
-    host_sdp = db.Column(db.String, nullable=False, unique=True)
+    host_sdp = db.Column(db.String, unique=True)
     client_sdp = db.Column(db.String, unique=True)
 
     def __init__(self, ip_address, user_name, host_sdp, client_sdp):
