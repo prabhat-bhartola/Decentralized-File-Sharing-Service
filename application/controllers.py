@@ -2,44 +2,49 @@ from flask import Flask, request, redirect, jsonify
 from flask import render_template
 from flask import current_app as app
 from flask import send_file, send_from_directory, safe_join, abort
-import os
+
 from application.models import *
 from application import tools
 
+from random import randint
 
-@app.route("/")
+
+@app.route("/", methods=["GET", "POST"])
 def home():
 	'''
-	Show all files and chats in home page
+	Show all files and chats in home page.
+	STORE/UPDATE the session description protocol of user along with user info like ip address etc.
 	'''
 
 	if request.method == "GET":
 
 		try:
+			# INSERT THE NEW GENERATED SDP INTO USER TABLE
+			# NEW QUERY FOR FETCHING FILES
+			user_ip = str(request.remote_addr)
+
+			user = Users.query.filter_by(ip_addr=user_ip).first()
+
+			if user is None:
+				# GET THE SDP AND INSERT WITH ALL OTHER DETAILS
+				new_user = Users(user_ip, "anonymous", str(randint(0, 100000)), str(randint(0, 100000)))
+
+				db.session.add(new_user)
+				db.session.commit()
+
+			else:
+				#GET THE NEW SDP AND UPDATE IT
+				pass
 
 			files = Files.query.all()
-			chats = Chats.query.all()
+			# chats = Chats.query.all()
 
 			return render_template("home.html", files=files)
 
 		except:
 
 			return render_template("went_wrong.html")
-	# elif request.method == "POST":
 
-	# 	try:
-
-	# 		message = request.form["message"]
-
-	# 		new_message = Chats("anonymous", message)
-	# 		db.session.add(new_message)
-	# 		db.session.commit()
-	# 		# return redirect("/home")
-	# 		return redirect(request.referrer)
-	# 		# return jsonify({'result': 'success'})
-	# 	except Exception as e:
-	# 		print(e)
-	# 		return render_template("went_wrong.html")	
 	else:
 
 		return render_template("went_wrong.html")
@@ -58,11 +63,12 @@ def send_message():
 		result = []
 		for chat in chats:
 			result.append({
-				"written_by": chat.written_by,
-				"datetime_created": chat.datetime_created,
-				"message": chat.message
+				"written_by": chat.author_ip,
+				"date_created": chat.date_created,
+				"time_created": chat.time_created,
+				"message": chat.content
 			})
-		return render_template("load_chats.html", chats=chats)
+		return render_template("load_chats.html", chats=result)
 
 	elif request.method == "POST":
 
@@ -70,7 +76,8 @@ def send_message():
 
 		if len(message):
 
-			new_message = Chats("anonymous", message)
+			author_ip = request.remote_addr
+			new_message = Chats(message, author_ip)
 			db.session.add(new_message)
 
 			db.session.commit()
@@ -104,14 +111,26 @@ def download_file(file_no):
 
 	except Exception as e:
 		'''
-		If file is not present, Remove it from the database
+		If file is not present, Set currently hosted to 0
 		'''
-		curr_file = Files.query.filter_by(file_no=file_no).first()
-		db.session.delete(curr_file)
+		# NEW QUERY FOR UPDATING CLIENT STATUS
 
-		db.session.commit()
+		user = db.session.query(Files, Users)\
+			.filter(Files.u_ip == Users.ip_addr).first()
 
-		return render_template("file_not_found.html")
+		if user.Users.conn_status == 1:
+			req_file = Files.query.filter_by(file_no=file_no)
+			req_file.delete()
+
+			db.session.commit()
+
+			msg = """
+				The filename is wrong or the file path entered by the user is wrong.
+				This file will be deleted.
+			"""
+			return render_template("file_not_found.html", message = msg)
+
+		return render_template("file_not_found.html", message = "The user seems to be not connected to the WIFI")
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -137,10 +156,11 @@ def upload_file():
 			file_name = request.form["file_name"]
 			abs_path = request.form["abs_path"]
 			desc = request.form["description"]
+			ip = str(request.remote_addr)
 
 			file_type = tools.get_type_from_ext(file_name)
 
-			new_file = Files(file_name, file_type, 00, abs_path, "User", desc)
+			new_file = Files(file_name, file_type, 00, abs_path, desc, ip)
 
 			db.session.add(new_file)
 			db.session.commit()
@@ -153,3 +173,18 @@ def upload_file():
 
 	else:
 		return render_template("went_wrong.html")
+
+
+@app.route("/donate", methods=["GET"])
+def donate():
+	return render_template("donate.html")
+
+
+@app.route("/about")
+def about():
+	return render_template("about.html")
+
+
+@app.route("/contact")
+def contact():
+	return render_template("contact.html")
