@@ -32,6 +32,9 @@
     <!-- local bootstrap -->
     <!-- <script src="../static/bootstrap-5.1.3-dist/bootstrap.min.css"></script> -->
 
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.min.js"></script>
+
     <script language="JavaScript" type="text/javascript" src="../static/script.js"></script>
 
 
@@ -128,7 +131,9 @@
                     <td>{{ file["file_name"] }}</td>
                     <td>{{ file["file_size"] }}</td>
                     <td>{{ file["u_ip"][:3] }}.XXX.XX.{{ file["u_ip"][11:] }}</td>
-                    <td><a href="/download/{{ file['file_no'] }}/"><button class="btn btn-success">Download</button></a>
+                    <td><a href="/download/{{ file['file_no'] }}/"><button class="btn btn-success" id="downloadButton"
+                                onclick="create_client_conn(get_host_sdp, client_request)"
+                                name="/download/{{ file['file_no'] }}/">Download</button></a>
                     </td>
                 </tr>
                 {% endfor %}

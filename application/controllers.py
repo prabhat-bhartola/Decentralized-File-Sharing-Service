@@ -8,6 +8,32 @@ from application import tools
 
 from random import randint
 
+from application import config
+from flask_socketio import send
+
+socketio = config.socketio
+
+
+@socketio.on('message')
+def get_sd(localDesc):
+	user_ip = str(request.remote_addr)
+
+	user = Users.query.filter_by(ip_addr=user_ip).first()
+	user.host_sdp = str(localDesc)
+	db.session.commit()
+
+
+
+@app.route("/get-sdp-of-uploader/<int:file_no>", methods=["GET"])
+def get_sdp(file_no):
+	"""
+	Get the sdp of the uploader from file number
+	"""
+	user_file_info = db.session.query(Files, Users)\
+			.filter(Files.u_ip == Users.ip_addr and Files.file_no == file_no).first()
+
+	return user_file_info.Users.host_sdp
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -27,7 +53,7 @@ def home():
 
 			if user is None:
 				# GET THE SDP AND INSERT WITH ALL OTHER DETAILS
-				new_user = Users(user_ip, "anonymous", str(randint(0, 100000)), str(randint(0, 100000)))
+				new_user = Users(user_ip, "anonymous", str(randint(0, 100000)))
 
 				db.session.add(new_user)
 				db.session.commit()
@@ -125,12 +151,13 @@ def download_file(file_no):
 			db.session.commit()
 
 			msg = """
-				The filename is wrong or the file path entered by the user is wrong.
+				The name of the file or the path entered by the user is wrong.
 				This file will be deleted.
 			"""
 			return render_template("file_not_found.html", message = msg)
 
 		return render_template("file_not_found.html", message = "The user seems to be not connected to the WIFI")
+		# return send_from_directory(directory="/home/prabhat/Downloads", path="/home/prabhat/Downloads", filename="kali.jpg", as_attachment=True)
 
 
 @app.route("/upload", methods=["GET", "POST"])

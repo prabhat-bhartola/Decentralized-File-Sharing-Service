@@ -91,98 +91,116 @@ $(function() {
 
 // WEB-RTC CONNECTION FROM HERE
 
-// WILL RUN ON THE CLIENT HOSTING THE FILE / OR EVERY CLIENT - I AM NOT SO SURE ABOUT IT
-// var ld;
-// var lc;
-// var dc;
-// function init_conn(){
-//     lc = new RTCPeerConnection();
-//     dc = lc.createDataChannel("channel");
-
-//     dc.onmessage = e => console.log("Just got a message " + e.data);
-//     dc.onopen = e => console.log("Connection Open!");
-
-//     // EVERY TIME WE GET A NEW ICE CANDIDATE
-//     lc.onicecandidate = e =>{
-//         // console.log("New ICE Candidate! reprinting SDP" + JSON.stringify(lc.localDescription));
-//         ld = JSON.stringify(lc.localDescription);
-//     }
-
-//     lc.createOffer().then(o => lc.setLocalDescription(o));
-
-
-//     // RUN AFTER GETTING ANSWER AS RESPONSE FROM THE REQUESTEE
-//     // const answer = null // ANSWER GOES HERE
-//     // lc.setRemoteDescription(answer)
-// }
-
-// init_conn();
-// function custom_callback(callback1){
-//     callback1();
-//     setTimeout(function(){
-//         console.log(ld);
-//         document.getElementById("ld").value = ld;
-//         document.forms['local-desc'].submit();
-//       }, 500);
-// }
-
 // $(document).ready(function(){
-//     custom_callback(init_conn);
+//     var socket = io.connect('http://192.168.29.83:8080/');
 
-//     req = $.ajax({
-//         url: "/get-session-info",
-//         type: "POST",
-//         data : {ld: ld}
+//     socket.on('connect', function(){
+//         socket.send("User has connected 6969");
 //     });
-
-//     // document.getElementById("ld").value = ld;
-//     // document.forms['local-desc'].submit();
-
 // });
 
 
-// SEND THE LOCAL DESCRIPTION TO THE SERVER
-// function get_ld(callback){
-//     callback();
-//     var data_dict = {
-//         "ld": 10
-//     }
-
-//     $.ajax({
-//         url: "/",
-//         type: 'POST',
-//         data: JSON.stringify(data_dict),
-//     });
-// };
-
-// function putValue(){
-//     document.getElementById("ld").value = 10;
-//     document.forms['local-desc'].submit();
-//     console.log(10);
-// }
-
-// function custom_callback(callback1, callback2){
-//     callback1();
-//     callback2();
-// }
-// $(document).ready(custom_callback(init_conn, putValue));
 
 
+
+
+// WILL RUN ON THE CLIENT HOSTING THE FILE / OR EVERY CLIENT - I AM NOT SO SURE ABOUT IT
+var ld;
+var lc;
+var dc;
+
+
+function custom_callback(callback1, callback2){
+    callback1();
+    setTimeout(function(){
+        callback2();
+      }, 500);
+}
+
+
+// CREATE SOCKET AND SEND LD (LOCAL DESCRIPTION) TO THE SERVER
+function createSocket(){
+    var socket = io.connect('http://192.168.29.83:8080/');
+
+    socket.on('connect', function(){
+        socket.send(ld);
+    });
+
+    // $('#downloadButton').on('click', function(){
+
+    // });
+}
+
+
+function init_conn(){
+    lc = new RTCPeerConnection();
+    dc = lc.createDataChannel("channel");
+
+    // dc.onmessage = e => console.log("Just got a message " + e.data);
+    // dc.onopen = e => console.log("Connection Open!");
+
+    // EVERY TIME WE GET A NEW ICE CANDIDATE
+    lc.onicecandidate = e =>{
+        // console.log("New ICE Candidate! reprinting SDP" + JSON.stringify(lc.localDescription));
+        ld = JSON.stringify(lc.localDescription);
+    }
+
+    lc.createOffer().then(o => lc.setLocalDescription(o));
+
+
+    // RUN AFTER GETTING ANSWER AS RESPONSE FROM THE REQUESTEE
+    // const answer = null // ANSWER GOES HERE
+    // lc.setRemoteDescription(answer)
+}
+
+
+// GET THE SDP OF THE COMPUTER HOSTING THE FILE
+function get_host_sdp(){
+    
+    file_url = event.target.name.split("/");
+
+    info_url = "/get-sdp-of-uploader/" + String(file_url[file_url.length-2]);
+
+    var data;
+    req = $.ajax({
+        url: info_url,
+        type: "GET",
+        async: false,
+        datatype: "string",
+        success: function(response){
+            data = response;
+        }
+    });
+
+    return data;
+}
+
+
+function create_client_conn(callback1, callback2){
+    var host_sdp = callback1();
+    callback2(host_sdp);
+}
 
 // WILL RUN ON THE CLIENT REQUESTING THE FILE
-// function client_request(){
-//     const offer = NULL; // CHANGE HERE
+function client_request(host_sdp){
 
-//     const rc = new RTCPeerConnection();
+    const rc = new RTCPeerConnection();
 
-//     rc.onicecandidate = e => console.log(JSON.stringify(rc.localDescription));
+    rc.onicecandidate = e => console.log(JSON.stringify(rc.localDescription));
 
-//     rc.ondatachannel = e => {
-//         rc.dc = e.channel;
-//         rc.dc.onmessage = e => console.log("new message - " + e.data);
-//         rc.dc.onopen = e => console.log("Connection OPEN!");
-//     }
+    rc.ondatachannel = e => {
+        rc.dc = e.channel;
+        // rc.dc.onmessage = e => console.log("new message - " + e.data);
+        // rc.dc.onopen = e => console.log("Connection OPEN!");
+    }
 
-//     rc.setRemoteDescription(offer).then(a => console.log("offer set!"));
-//     rc.createAnswer().then(a => rc.setLocalDescription(a));
-// }
+    rc.setRemoteDescription(JSON.parse(host_sdp));
+    rc.createAnswer().then(a => rc.setLocalDescription(a));
+}
+
+
+$(document).ready(function(){
+    custom_callback(init_conn, createSocket);
+
+});
+// $('#downloadLink').on('click', client_request());

@@ -1,6 +1,7 @@
 import os
 # PRINTS THE PATH OF THE FOLDER OF CURRENT FILE
 basedir = os.path.abspath(os.path.dirname(__file__))
+socketio = None
 
 class Config():
     DEBUG = False   #PRINTS DEBUG INFORMATION

@@ -9,10 +9,9 @@ class Users(db.Model):
     host_sdp = db.Column(db.String, unique=True)
     client_sdp = db.Column(db.String, unique=True)
 
-    def __init__(self, ip_address, user_name, host_sdp, client_sdp):
+    def __init__(self, ip_address, user_name, client_sdp):
         self.ip_addr = ip_address
         self.user_name = user_name
-        self.host_sdp = host_sdp
         self.client_sdp = client_sdp
 
 

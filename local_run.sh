@@ -15,4 +15,6 @@ fi
 . .venv/bin/activate
 export ENV=development
 python app.py
+
+# gunicorn -b 192.168.29.83:8080 --workers 4 --threads 10 app:app
 deactivate
