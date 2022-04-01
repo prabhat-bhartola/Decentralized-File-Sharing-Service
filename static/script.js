@@ -60,7 +60,7 @@ function loadchats(){
 
 setInterval(function(){
     loadchats() // this will run after every 5 seconds
-}, 5000);
+}, 10000);
 
 
 function loadPageWithScroll(callback){
@@ -89,25 +89,20 @@ $(function() {
 
 
 
+
 // WEB-RTC CONNECTION FROM HERE
-
-// $(document).ready(function(){
-//     var socket = io.connect('http://192.168.29.83:8080/');
-
-//     socket.on('connect', function(){
-//         socket.send("User has connected 6969");
-//     });
-// });
-
-
-
-
-
+// server = my computer
+// host = device hosting a file
+// client = device requesting for download
 
 // WILL RUN ON THE CLIENT HOSTING THE FILE / OR EVERY CLIENT - I AM NOT SO SURE ABOUT IT
+var serverIP = 'http://192.168.29.83:8080/';
 var ld;
 var lc;
 var dc;
+var socket;
+
+var client_lc = null;
 
 
 function custom_callback(callback1, callback2){
@@ -118,20 +113,31 @@ function custom_callback(callback1, callback2){
 }
 
 
-// CREATE SOCKET AND SEND LD (LOCAL DESCRIPTION) TO THE SERVER
+// Creates socket and send the local description to the server on connect event
 function createSocket(){
-    var socket = io.connect('http://192.168.29.83:8080/');
+    socket = io.connect(serverIP);
 
     socket.on('connect', function(){
-        socket.send(ld);
+        var data = {
+            "socket_id": socket.id,
+            "local_desc": ld
+        }
+        
+        JSON.stringify(data);
+        socket.send(data);
     });
 
-    // $('#downloadButton').on('click', function(){
+    // This will complete the WebRTC handshake
+    socket.on('complete-handshake', (data) => {
+        const answer = JSON.parse(data['local_desc']);
+        lc.setRemoteDescription(answer)
 
-    // });
+        console.log("Connection created!")
+    })
 }
 
 
+// Runs on every device on connect
 function init_conn(){
     lc = new RTCPeerConnection();
     dc = lc.createDataChannel("channel");
@@ -149,17 +155,31 @@ function init_conn(){
 
 
     // RUN AFTER GETTING ANSWER AS RESPONSE FROM THE REQUESTEE
-    // const answer = null // ANSWER GOES HERE
-    // lc.setRemoteDescription(answer)
+
+    // if (client_lc != null){
+
+    //     const answer = client_lc // ANSWER GOES HERE
+    //     lc.setRemoteDescription(answer)
+    // }
+
+    // async function(){
+    //     if (client_lc != null){
+
+    //         const answer = client_lc // ANSWER GOES HERE
+    //         lc.setRemoteDescription(answer)
+    //     }
+    // }
 }
 
 
-// GET THE SDP OF THE COMPUTER HOSTING THE FILE
+// Runs on the client machine and fetches the local description
+// of the device hosting the file
 function get_host_sdp(){
     
     file_url = event.target.name.split("/");
+    file_no = String(file_url[file_url.length-2]);
 
-    info_url = "/get-sdp-of-uploader/" + String(file_url[file_url.length-2]);
+    info_url = "/get-sdp-of-uploader/" + file_no;
 
     var data;
     req = $.ajax({
@@ -168,7 +188,11 @@ function get_host_sdp(){
         async: false,
         datatype: "string",
         success: function(response){
-            data = response;
+            // data = response;
+            data = {
+                "host_sdp": response,
+                "file_no": file_no
+            }
         }
     });
 
@@ -176,28 +200,51 @@ function get_host_sdp(){
 }
 
 
-function create_client_conn(callback1, callback2){
-    var host_sdp = callback1();
-    callback2(host_sdp);
-}
-
-// WILL RUN ON THE CLIENT REQUESTING THE FILE
-function client_request(host_sdp){
+// Creates an RTCPeerConnection on the client machine and,
+// send the local Description to server
+function client_request(host_sdp, file_no){
 
     const rc = new RTCPeerConnection();
 
-    rc.onicecandidate = e => console.log(JSON.stringify(rc.localDescription));
+    rc.onicecandidate = e => {
+        client_lc = JSON.stringify(rc.localDescription);
+        // console.log(JSON.stringify(rc.localDescription))
+    }
 
     rc.ondatachannel = e => {
         rc.dc = e.channel;
-        // rc.dc.onmessage = e => console.log("new message - " + e.data);
+        rc.dc.onmessage = e => console.log("new message - " + e.data);
         // rc.dc.onopen = e => console.log("Connection OPEN!");
     }
 
     rc.setRemoteDescription(JSON.parse(host_sdp));
     rc.createAnswer().then(a => rc.setLocalDescription(a));
+
+
+    // Create websocket to send local description to server
+
+    setTimeout(function(){
+        var data = {
+            "local_desc": client_lc,
+            "file_no": file_no
+        }
+        JSON.stringify(data);
+        socket.emit('client_initialized', data);
+    }, 500);
 }
 
+
+// This is called when user presses th download button
+// It calls the get_host_sdp() and pases the result to client_request()
+function create_client_conn(callback1, callback2){
+    data = callback1();
+
+    host_sdp = data['host_sdp'];
+    file_no = data['file_no'];
+
+    callback2(host_sdp, file_no);
+}
+    
 
 $(document).ready(function(){
     custom_callback(init_conn, createSocket);

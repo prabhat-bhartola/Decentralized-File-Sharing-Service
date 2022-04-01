@@ -6,23 +6,64 @@ from flask import send_file, send_from_directory, safe_join, abort
 from application.models import *
 from application import tools
 
-from random import randint
-
 from application import config
 from flask_socketio import send
+import socket
 
 socketio = config.socketio
 
 
 @socketio.on('message')
-def get_sd(localDesc):
+def get_initial_data(data):
+	"""
+	Get local description and socket id of the client and store them in database.
+	"""
+
+	socket_id = data["socket_id"]
+	localDesc = data["local_desc"]
+
 	user_ip = str(request.remote_addr)
 
 	user = Users.query.filter_by(ip_addr=user_ip).first()
+
 	user.host_sdp = str(localDesc)
+	user.socket_id = str(socket_id)
+
 	db.session.commit()
 
 
+@socketio.on('client_initialized')
+def get_client_ld(data):
+	"""
+	Runs after initializing the client RTCpeer connection
+	Sends local description back to the host 
+	"""
+	# print(data)
+	# socketio.emit('finalize-conn', {'localDesc': data}, "_DKcGph1fETiCsg1AAAF")
+	user_file_info = db.session.query(Files, Users)\
+			.filter(Files.u_ip == Users.ip_addr and Files.file_no == file_no).first()
+	
+	host_sid = user_file_info.Users.socket_id
+	# print(host_sid)
+
+	socketio.emit('complete-handshake', data, to=host_sid)
+
+
+@socketio.on('get-download-sd')
+def get_download_sd(localDesc):
+	print(localDesc)
+
+
+def get_server_ip():
+	"""
+	Get the ip address of the server
+	"""
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s.connect(("8.8.8.8", 80))
+	server_ip = s.getsockname()[0]
+	s.close()
+
+	return str(server_ip)
 
 @app.route("/get-sdp-of-uploader/<int:file_no>", methods=["GET"])
 def get_sdp(file_no):
@@ -53,7 +94,7 @@ def home():
 
 			if user is None:
 				# GET THE SDP AND INSERT WITH ALL OTHER DETAILS
-				new_user = Users(user_ip, "anonymous", str(randint(0, 100000)))
+				new_user = Users(user_ip, "anonymous", "")
 
 				db.session.add(new_user)
 				db.session.commit()
@@ -77,19 +118,25 @@ def home():
 
 
 @app.route("/chat", methods=["GET", "POST"])
-def send_message():
+def send_recieve_message():
 	"""
 	FOR IMPLEMENTING CHAT FUNCTIONALITY
 	"""
 
 	if request.method == "GET":
 
-		chats = Chats.query.all()
+		chats = Chats.query.order_by(Chats.chat_no.asc()).all()
 
 		result = []
 		for chat in chats:
+
+			if chat.author_ip == get_server_ip():
+				written_by = "~PRABHAT BHARTOLA"
+			else:
+				written_by = "~" + chat.author_ip[:3] + ".XXX.XX." + chat.author_ip[11:]
+
 			result.append({
-				"written_by": chat.author_ip[:3] + ".XXX.XX." + chat.author_ip[11:],
+				"written_by": written_by,
 				"date_created": chat.date_created,
 				"time_created": chat.time_created,
 				"message": chat.content
